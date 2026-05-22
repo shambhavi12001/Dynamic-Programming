@@ -1,7 +1,7 @@
 # ECE276B SP26 Project 1
 
 ## Overview
-In this assignment, you are required to implement dynamic programming for the Door-Key problems.
+This project studies autonomous navigation in a Door-Key grid environment, where an agent must reach a goal location while interacting with obstacles. The environment is deterministic, meaning state transitions are fully determined by the current state and action.
 <p align="center">
 <img src="gif/doorkey.gif" alt="Door-key Problem" width="500"/></br>
 </p>
