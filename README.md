@@ -63,9 +63,7 @@ UD = 4  # Unlock Door
 ## Output
 
 The generated GIFs are saved in the `gif/` folder.
-```
 
-```
 For Part A, the program saves:
 
 ```
