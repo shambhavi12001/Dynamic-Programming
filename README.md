@@ -1,98 +1,109 @@
-# Dynamic Programming
+<div align="center">
+
+# Dynamic Programming — Door-Key Navigation
+
+**An optimal-control agent that solves Door-Key grid environments with deterministic dynamic programming — picking up keys, unlocking doors, and reaching the goal along a provably minimum-cost path.**
+
+![Python](https://img.shields.io/badge/Python-3.8--3.12-3776AB?logo=python&logoColor=white)
+![Method](https://img.shields.io/badge/Method-Dynamic%20Programming-1e2327)
+![Environment](https://img.shields.io/badge/Env-MiniGrid%20Door--Key-success)
+![Status](https://img.shields.io/badge/status-complete-brightgreen)
+
+<img src="gif/doorkey.gif" alt="Door-Key agent solving the environment" width="320"/>
+
+</div>
+
+---
 
 ## Overview
-This project studies autonomous navigation in a Door-Key grid environment, where an agent must reach a goal location while interacting with obstacles. The environment is deterministic, meaning state transitions are fully determined by the current state and action.
-<p align="center">
-<img src="gif/doorkey.gif" alt="Door-key Problem" width="500"/></br>
-</p>
 
-There are 7 test scenes you have to test and include in the report.
+This project tackles autonomous navigation in a **Door-Key grid world**: an agent must reach a goal cell, but the path may be blocked by a locked door that can only be opened after picking up a key. The environment is **deterministic** — each state and action fully determine the next state — which makes it a clean setting for **dynamic programming** to compute an optimal control policy.
 
-|           doorkey-5x5-normal            |
-| :-------------------------------------: |
-| <img src="envs/known_envs/doorkey-5x5-normal.png"> |
+The agent is solved in two regimes:
 
-|           doorkey-6x6-normal            |            doorkey-6x6-direct            |            doorkey-6x6-shortcut            |
-| :-------------------------------------: | :--------------------------------------: | :----------------------------------------: |
-| <img src="envs/known_envs/doorkey-6x6-normal.png"> | <img src="envs/known_envs/doorkey-6x6-direct.png" > | <img src="envs/known_envs/doorkey-6x6-shortcut.png" > |
+- **Part A — Known maps:** for each fixed environment, DP computes the single optimal action sequence from start to goal.
+- **Part B — Random maps:** a single policy is computed over the augmented state space so it generalizes across randomized key/door/goal configurations.
 
-|           doorkey-8x8-normal            |            doorkey-8x8-direct            |            doorkey-8x8-shortcut            |
-| :-------------------------------------: | :--------------------------------------: | :----------------------------------------: |
-| <img src="envs/known_envs/doorkey-8x8-normal.png"> | <img src="envs/known_envs/doorkey-8x8-direct.png" > | <img src="envs/known_envs/doorkey-8x8-shortcut.png" > |
+Full derivation and results are in [`ECE276B PR1 Report.pdf`](./ECE276B%20PR1%20Report.pdf).
 
-## Installation
+## Approach
 
-- Install Python version `3.8 ~ 3.12`
-- Install dependencies
+The problem is cast as a finite-horizon deterministic shortest-path problem. The state is augmented beyond position to capture everything that affects future cost — agent location, heading, whether the key is held, and whether the door is open — and DP works backward from the goal to assign an optimal cost-to-go and policy at every reachable state.
+
+```mermaid
+flowchart LR
+    A[Load Door-Key env] --> B[Build augmented state space<br/>pos, heading, key, door]
+    B --> C[Backward dynamic programming<br/>cost-to-go over horizon]
+    C --> D[Extract optimal policy]
+    D --> E[Roll out action sequence]
+    E --> F[Render & save GIF]
+```
+
+### Action space
+
+```text
+MF = 0   # Move Forward
+TL = 1   # Turn Left
+TR = 2   # Turn Right
+PK = 3   # Pickup Key
+UD = 4   # Unlock Door
+```
+
+## Repository structure
+
+| Path | Role |
+| --- | --- |
+| `doorkey.py` | Main entry point — builds the DP solver and produces the optimal control sequence. |
+| `utils.py` | Helpers: `step`, `load_env`, `save_env`, `plot_env`, `generate_random_env`, `draw_gif_from_seq`. |
+| `create_env.py` | Generates / configures Door-Key environments. |
+| `known_maps.py` | Definitions for the fixed (known) test maps. |
+| `example.py` | Reference examples for interacting with the env and utilities. |
+| `envs/` | Environment assets, including `known_envs/` preview images. |
+| `gif/` | Rendered solution GIFs (output). |
+| `requirements.txt` | Python dependencies. |
+| `ECE276B PR1 Report.pdf` | Technical report with methods and results. |
+
+## Getting started
+
+### Prerequisites
+
+- Python `3.8` – `3.12`
+
 ```bash
+git clone https://github.com/shambhavi12001/Dynamic-Programming.git
+cd Dynamic-Programming
 pip install -r requirements.txt
 ```
 
-## Instruction
-### 1. doorkey.py
-You will need to modify **doorkey.py** as the main entrance.
+### Run
 
-### 2. utils.py
-You might find some useful tools in utils.py
-- **step()**: Move your agent
-- **generate_random_env()**: Generate a random environment for debugging
-- **load_env()**: Load the test environments
-- **save_env()**: Save the environment for reproducing results
-- **plot_env()**: For a quick visualization of your current env, including: agent, key, door, and the goal
-- **draw_gif_from_seq()**: Draw and save a gif image from a given action sequence.
-
-### 3. example.py
-The example.py shows you how to interact with the utilities in utils.py, and also gives you some examples of interacting with gym-minigrid directly.
-
-
-## My Implementation
-
-The main implementation is in `doorkey.py`. The program solves the Door-Key environments using deterministic dynamic programming.
-
-### Action Space
-
-The action space is defined as:
-
-```python
-MF = 0  # Move Forward
-TL = 1  # Turn Left
-TR = 2  # Turn Right
-PK = 3  # Pickup Key
-UD = 4  # Unlock Door
+```bash
+mkdir -p gif
+python doorkey.py
 ```
+
+Solution GIFs are written to the `gif/` folder.
+
+## Test environments
+
+The known maps span three grid sizes and three layout variants (normal / direct / shortcut):
+
+| | | |
+| :---: | :---: | :---: |
+| ![5x5 normal](envs/known_envs/doorkey-5x5-normal.png)<br/>`5x5-normal` | ![6x6 normal](envs/known_envs/doorkey-6x6-normal.png)<br/>`6x6-normal` | ![6x6 direct](envs/known_envs/doorkey-6x6-direct.png)<br/>`6x6-direct` |
+| ![6x6 shortcut](envs/known_envs/doorkey-6x6-shortcut.png)<br/>`6x6-shortcut` | ![8x8 normal](envs/known_envs/doorkey-8x8-normal.png)<br/>`8x8-normal` | ![8x8 direct](envs/known_envs/doorkey-8x8-direct.png)<br/>`8x8-direct` |
+| ![8x8 shortcut](envs/known_envs/doorkey-8x8-shortcut.png)<br/>`8x8-shortcut` | | |
+
 ## Output
 
-The generated GIFs are saved in the `gif/` folder.
+- **Part A** writes one GIF per known map, e.g. `gif/known_8x8-shortcut.env.gif`.
+- **Part B** writes GIFs for each random configuration, e.g. `gif/random_1.gif … gif/random_36.gif`.
 
-For Part A, the program saves:
+## Acknowledgements
 
-```
-gif/known_5x5-normal.env.gif
-gif/known_6x6-normal.env.gif
-gif/known_6x6-direct.env.gif
-gif/known_6x6-shortcut.env.gif
-gif/known_8x8-normal.env.gif
-gif/known_8x8-direct.env.gif
-gif/known_8x8-shortcut.env.gif
-```
+Developed as **Project 1** of **UCSD ECE 276B: Planning & Learning in Robotics**. The Door-Key environment is based on MiniGrid.
 
-For Part B:
+## License
 
-```
-gif/random_1.gif
-gif/random_2.gif
-...
-gif/random_36.gif
-```
-
-## How to Run
-
-After downloading the project folder, open a terminal and go into the starter code folder:
-
-```bash
-cd ECE276B_Project1
-pip install -r requirements.txt
-python doorkey.py
-mkdir -p gif
-```
-
+<!-- Add a license file and update this line, e.g. MIT. -->
+No license specified yet — add one if you intend others to reuse the code.
