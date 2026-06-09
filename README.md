@@ -101,9 +101,5 @@ The known maps span three grid sizes and three layout variants (normal / direct 
 
 ## Acknowledgements
 
-Developed as **Project 1** of **UCSD ECE 276B: Planning & Learning in Robotics**. The Door-Key environment is based on MiniGrid.
+Developed as Project of **UCSD ECE 276B: Planning & Learning in Robotics**. The Door-Key environment is based on MiniGrid.
 
-## License
-
-<!-- Add a license file and update this line, e.g. MIT. -->
-No license specified yet — add one if you intend others to reuse the code.
