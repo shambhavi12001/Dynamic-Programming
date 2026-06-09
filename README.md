@@ -24,7 +24,7 @@ The agent is solved in two regimes:
 - **Part A — Known maps:** for each fixed environment, DP computes the single optimal action sequence from start to goal.
 - **Part B — Random maps:** a single policy is computed over the augmented state space so it generalizes across randomized key/door/goal configurations.
 
-Full derivation and results are in [`ECE276B PR1 Report.pdf`](./ECE276B%20PR1%20Report.pdf).
+Full derivation and results are in [`Report.pdf`](./Report.pdf).
 
 ## Approach
 
@@ -61,7 +61,7 @@ UD = 4   # Unlock Door
 | `envs/` | Environment assets, including `known_envs/` preview images. |
 | `gif/` | Rendered solution GIFs (output). |
 | `requirements.txt` | Python dependencies. |
-| `ECE276B PR1 Report.pdf` | Technical report with methods and results. |
+| `Report.pdf` | Technical report with methods and results. |
 
 ## Getting started
 
